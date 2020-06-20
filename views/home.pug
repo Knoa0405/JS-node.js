@@ -1,7 +1,14 @@
 extends layouts/main
+include mixins/videoBlock
+//- videoBlock 가져와서 포함시킴 & 아래에 사용함
+//- videoBlock에 item의 title과 description을 video 파라미터에 담아주면(정보만 넘겨주는것)
+//- video.title은 h1에 video.description은 p에 매핑되는 구조
 
 block content
     .videos
         each item in videos
-            h1= item.title
-            p= item.description
+            +videoBlock({
+                title : item.title,
+                views : item.views,
+                videoFile : item.videoFile
+            })
