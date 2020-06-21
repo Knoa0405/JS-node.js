@@ -1,51 +1,20 @@
-export const videos = [
-    {
-        id : 323410,
-        title : 'Video awesome',
-        description : 'This is something I love',
-        views : 24,
-        videoFile : "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
-        creator : {
-            id : 123123,
-            name : "Noah",
-            email : 'mike1124@naver.com'
-        }
-    },
-    {
-        id : 123241,
-        title : 'Video Super',
-        description : 'This is something I love',
-        views : 24,
-        videoFile : "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
-        creator : {
-            id : 123123,
-            name : "Noah",
-            email : 'mike1124@naver.com'
-        }
-    },
-    {
-        id : 325262,
-        title : 'Video nice',
-        description : 'This is something I love',
-        views : 24,
-        videoFile : "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
-        creator : {
-            id : 123123,
-            name : "Noah",
-            email : 'mike1124@naver.com'
-        }
-    },
-    {
-        id : 121322,
-        title : 'Video perfect',
-        description : 'This is something I love',
-        views : 24,
-        videoFile : "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
-        creator : {
-            id : 123123,
-            name : "Noah",
-            email : 'mike1124@naver.com'
-        }
-    }
-]
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
+mongoose.connect(
+// .env 에 키를 숨겨 보안 이슈를 해결한다.(dotenv로 사용) ? 환경변수라고 한다.
+    process.env.MONGO_URL,
+    {
+        useNewUrlParser : true,
+        useFindAndModify : false
+    }
+);
+
+const db = mongoose.connection;
+
+const handleOpen = () => console.log("Connected to DB");
+const handleError = () => console.log(`Error on DB Connection : ${error}`);
+
+db.once("open", handleOpen);
+db.on("error", handleError);

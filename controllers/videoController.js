@@ -1,18 +1,29 @@
-import{ videos } from "../db"
+
+import routes from "../routes";
 
 export const home = (req,res) => {
     res.render("home", { pageTitle : "Home", videos : videos });
 };
 
 export const search = (req,res) => { 
+    // const searchingBy = req.query.term;
+    // ES6 문법으로 나타내면 아래와 같다.
     const {
         query : { term : searchingBy }
     } = req;
-    res.render("search",{ pageTitle : "Search", searchingBy }); // 템플릿 각각에 정보를 전달하는 방식
+    res.render("search",{ pageTitle : "Search", searchingBy, videos }); // 템플릿 각각에 정보를 전달하는 방식
 }
 
-export const upload = (req,res) =>
+export const getUpload = (req,res) => {
     res.render("upload", { pageTitle : "Upload"});
+}
+export const postUpload = (req,res) => {
+    const {
+        body : { file, title, description }
+    } = req;
+    // to Do : Upload and Save video
+    res.redirect(routes.videoDetail(323410));
+}
 
 export const videoDetail = (req,res) =>
     res.render("videoDetail", { pageTitle : "VideoDetail"});
