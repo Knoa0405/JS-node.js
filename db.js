@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
+import "./models/Video";
 
 mongoose.connect(
 // .env 에 키를 숨겨 보안 이슈를 해결한다.(dotenv로 사용) ? 환경변수라고 한다.
