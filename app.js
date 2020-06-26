@@ -21,6 +21,7 @@ const app = express();
 //}
 app.use(helmet()); // NodeJs 보안을 위한 것 helmet 미들웨어
 app.set("view engine","pug");
+app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : true }));
