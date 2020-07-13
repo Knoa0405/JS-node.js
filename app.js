@@ -1,15 +1,25 @@
-import express from "express"; // express 는 일종의 프레임워크이다.
+import express from "express";
+import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
+import passport from "passport";
+import session from "express-session";
+import mongoose from "mongoose";
+import mongoStore from "connect-mongo";
 import { localMiddleware } from "./middlewares";
 import routes from "./routes";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
 
+dotenv.config();
+import "./passport";
+
 const app = express();
+
+const CookieStore = mongoStore(session)
 
 // const middleware = (req,res,next) => {
 //     res.send("not happening ! ")
@@ -29,6 +39,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev")); // 미들웨어 - 웹 브라우저가 해당 url로 GET 메소드로 요청하고 웹 서버가 응답시 그 사이에서 오고 가는 중간 로그 확인가능 
 // 많은 미들웨어가 있다 그 중 하나가 morgan
 // app.get("/",handleHome); // <- "/",middleware,handleHome 이렇게 들어간다.
+app.use(session({
+    secret: process.env.COOKIE_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    store: new CookieStore({
+        mongooseConnection: mongoose.connection
+    })
+}))
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(localMiddleware);
 
 

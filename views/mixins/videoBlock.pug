@@ -1,9 +1,12 @@
 //- 다른정보지만 같은 구조를 가지려고 할 때 사용 html 구조 재사용
 //- home.pug 에서 사용됨
 //- controls=true 하면 컨트롤 재생버튼 등이 비디오에 표시된다.(컨트롤 가능)
-mixin videoBlock(video = {}) 
+mixin videoBlock(video = {})
     .videoBlock
         a(href=routes.videoDetail(video.id))
-            video.videoBlock__thumbnail(src=video.videoFile, controls=true, width="320" height="180")
+            video.videoBlock__thumbnail(src=video.videoFile, controls=false)
             h4.videoBlock__title=video.title
-            h6.videoBlock__views=video.views
+            if video.views === 1
+                h6.videoBlock__views 1 view
+            else
+                h6.videoBlock__views #{video.views} views

@@ -3,6 +3,8 @@ import "./db";
 import dotenv from "dotenv";
 // .env 에 키를 숨겨 보안 이슈를 해결한다.(dotenv로 사용)
 dotenv.config();
+
+import "./models/User";
 import "./models/Video";
 import "./models/Comment";
 
