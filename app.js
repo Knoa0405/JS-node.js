@@ -1,25 +1,23 @@
 import express from "express";
-import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import passport from "passport";
-import session from "express-session";
 import mongoose from "mongoose";
-import mongoStore from "connect-mongo";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 import { localMiddleware } from "./middlewares";
 import routes from "./routes";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
 
-dotenv.config();
 import "./passport";
 
 const app = express();
 
-const CookieStore = mongoStore(session)
+const CookieStore = MongoStore(session);
 
 // const middleware = (req,res,next) => {
 //     res.send("not happening ! ")
@@ -46,11 +44,12 @@ app.use(session({
     store: new CookieStore({
         mongooseConnection: mongoose.connection
     })
-}))
+}));
+
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(localMiddleware);
 
+app.use(localMiddleware);
 
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
