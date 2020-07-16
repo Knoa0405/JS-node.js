@@ -45,14 +45,16 @@ export const postUpload = async(req, res) => {
     } = req;
     console.log(path);
     const newVideo = await Video.create({
-            fileUrl: path,
-            title,
-
-            description
-        })
-        // const { body , file } = req; // 여기서 file은 바로 템플릿에서 클라이언트 요청에 의해 바로 넘어오는 파일이 아니라 미들웨어 multer(uploadVideo)를 거쳐 파싱되어 들어오는 file 이다. 
-        // console.log(body,file); // 그래서 콘솔 찍으면 정보가 다르다.
-        // to Do : Upload and Save video
+        fileUrl: path,
+        title,
+        description,
+        creator: req.user._id
+    });
+    req.user.videos.push(newVideo.id);
+    req.user.save();
+    // const { body , file } = req; // 여기서 file은 바로 템플릿에서 클라이언트 요청에 의해 바로 넘어오는 파일이 아니라 미들웨어 multer(uploadVideo)를 거쳐 파싱되어 들어오는 file 이다. 
+    // console.log(body,file); // 그래서 콘솔 찍으면 정보가 다르다.
+    // to Do : Upload and Save video
 
     res.redirect(routes.videoDetail(newVideo.id));
 };
@@ -64,7 +66,7 @@ export const videoDetail = async(req, res) => {
         params: { id }
     } = req;
     try {
-        const video = await Video.findById(id);
+        const video = await Video.findById(id).populate("creator");
         res.render("videoDetail", { pageTitle: video.title, video });
     } catch (error) {
         console.log(error);
@@ -80,7 +82,11 @@ export const getEditVideo = async(req, res) => {
     } = req;
     try {
         const video = await Video.findById(id);
-        res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
+        if (String(video.creator) !== req.user.id) {
+            throw Error();
+        } else {
+            res.render("editVideo", { pageTitle: `Edit ${video.title}`, video });
+        }
     } catch (error) {
         res.render(routes.home);
     }
@@ -91,8 +97,7 @@ export const postEditVideo = async(req, res) => {
         params: { id },
         body: { title, description }
     } = req;
-    const test = Video.findById(id)
-    console.log(test);
+
     try {
         await Video.findOneAndUpdate({ _id: id }, { title: title, description: description });
         res.redirect(routes.videoDetail(id));
@@ -108,7 +113,12 @@ export const deleteVideo = async(req, res) => {
         params: { id }
     } = req;
     try {
-        await Video.findOneAndRemove({ _id: id });
+        const video = await Video.findById(id);
+        if (String(video.creator) !== req.user.id) {
+            throw Error();
+        } else {
+            await Video.findOneAndRemove({ _id: id });
+        }
     } catch (error) {
         console.log(error);
     }
