@@ -6,7 +6,7 @@ let streamObject;
 let videoRecorder;
 
 const handleVideoData = event => {
-    const { data:videoFile } = event;
+    const { data: videoFile } = event;
     const link = document.createElement("a");
     link.href = URL.createObjectURL(videoFile);
     link.download = "recorded.webm";
@@ -22,12 +22,13 @@ const stopRecording = () => {
     recordBtn.innerHTML = "Start Recording";
 };
 
-const startRecording = (stream) => {
+const startRecording = () => {
     videoRecorder = new MediaRecorder(streamObject);
     videoRecorder.start();
     videoRecorder.addEventListener("dataavailable", handleVideoData);
     recordBtn.addEventListener("click", stopRecording);
 };
+
 const getVideo = async() => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({
