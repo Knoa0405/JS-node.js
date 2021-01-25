@@ -1,9 +1,10 @@
 import passport from "passport";
 import routes from "../routes";
 import User from "../models/User";
+import multer from 'multer';
 
 export const getJoin = (req, res) => res.render("join", { pageTitle: "join" });
-export const postJoin = async(req, res, next) => {
+export const postJoin = async (req, res, next) => {
     const {
         body: { name, email, password, password2 }
     } = req;
@@ -35,7 +36,7 @@ export const postLogin = passport.authenticate('local', {
 
 export const githubLogin = passport.authenticate('github');
 
-export const githubLoginCallback = async(_, __, profile, cb) => {
+export const githubLoginCallback = async (_, __, profile, cb) => {
     const { _json: { id, avatar_url, name, email } } = profile;
     try {
         const user = await User.findOne({ email });
@@ -63,7 +64,7 @@ export const postGithubLogin = (req, res) => {
 
 export const facebookLogin = passport.authenticate('facebook');
 
-export const facebookLoginCallback = async(_, __, profile, cb) => {
+export const facebookLoginCallback = async (_, __, profile, cb) => {
     const { _json: { id, name, email } } = profile;
     try {
         const user = await User.findOne({ email });
@@ -100,7 +101,7 @@ export const getMe = (req, res) => {
     res.render("userDetail", { pageTitle: "UserDetail", user: req.user });
 };
 
-export const userDetail = async(req, res) => {
+export const userDetail = async (req, res) => {
     const { params: { id } } = req;
     try {
         const user = await (await User.findById(id).populate('videos'));
@@ -112,7 +113,7 @@ export const userDetail = async(req, res) => {
 
 export const getEditProfile = (req, res) => res.render("editProfile", { pageTitle: "EditProfile" });
 
-export const postEditProfile = async(req, res) => {
+export const postEditProfile = async (req, res) => {
     const {
         body: { name, email },
         file
@@ -131,7 +132,7 @@ export const postEditProfile = async(req, res) => {
 }
 export const getChangePassword = (req, res) => res.render("changePassword", { pageTitle: "ChangePassword" });
 
-export const postChangePassword = async(req, res) => {
+export const postChangePassword = async (req, res) => {
     const {
         body: {
             oldPassword,
@@ -151,4 +152,33 @@ export const postChangePassword = async(req, res) => {
         res.status(400);
         res.redirect(`/users${routes.changePassword}`);
     }
+}
+// 2021 추가 multer 실습용
+
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, done) {
+            done(null, 'uploads/');
+        },
+        filename(req, file, done) {
+            const ext = path.extname(file.originalname);
+
+            done(null, path.basename(file.originalname, ext) + Date.now() + ext);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+export const getUploadFile = (req, res) => {
+    console.log(path.join(__dirname, 'multipart.html'));
+    res.sendFile(path.join(__dirname, 'multipart.html'));
+}
+
+export const postUploadFile = (req, res) => {
+    upload.fields([{ name: 'image1' }, { name: 'image2' }]),
+        (req, res) => {
+            console.log(req.files, req.body);
+
+            res.send('ok');
+        },
 }

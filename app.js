@@ -12,6 +12,7 @@ import routes from "./routes";
 import userRouter from "./routers/userRouter";
 import videoRouter from "./routers/videoRouter";
 import globalRouter from "./routers/globalRouter";
+import fs from 'fs';
 import apiRouter from "./routers/apiRouter";
 
 import "./passport";
@@ -51,6 +52,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(localMiddleware);
+
+try {
+    fs.readdirSync('uploads');
+} catch (error) {
+    console.log('uploads 폴더가 없어 uploads 폴더를 생성합니다.');
+
+    fs.mkdirSync('uploads');
+}
 
 app.use(routes.home, globalRouter);
 app.use(routes.users, userRouter);
